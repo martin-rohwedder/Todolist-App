@@ -1,6 +1,7 @@
 ﻿using Application.Authentication.Shared;
 using Application.Shared.Interfaces.Authentication;
 using Application.Shared.Interfaces.Persistance;
+using Application.Shared.Interfaces.Utilities;
 using Domain.Entities;
 using MediatR;
 
@@ -10,11 +11,13 @@ namespace Application.Authentication.Queries.Login
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IPasswordHashService _passwordHashService;
 
-        public LoginQueryHandler(IUserRepository userRepository, IJwtTokenService jwtTokenService)
+        public LoginQueryHandler(IUserRepository userRepository, IJwtTokenService jwtTokenService, IPasswordHashService passwordHashService)
         {
             _userRepository = userRepository;
             _jwtTokenService = jwtTokenService;
+            _passwordHashService = passwordHashService;
         }
 
         public async Task<AuthenticationResult> Handle(LoginQuery request, CancellationToken cancellationToken)
@@ -28,7 +31,7 @@ namespace Application.Authentication.Queries.Login
             }
 
             // 2. Validate that the password is correct
-            if (user.Password != request.Password) 
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
                 throw new Exception("Bad Credentials");
             }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Shared.Interfaces.Utilities;
+using Application.Shared.Services.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
 {
@@ -8,6 +10,9 @@ namespace Application
         {
             // Add MediatR Service
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+
+            // Add Password Hash Service
+            services.AddSingleton<IPasswordHashService, PasswordHashService>();
 
             return services;
         }

@@ -1,6 +1,7 @@
 ﻿using Application.Authentication.Shared;
 using Application.Shared.Interfaces.Authentication;
 using Application.Shared.Interfaces.Persistance;
+using Application.Shared.Interfaces.Utilities;
 using Domain.Entities;
 using MediatR;
 
@@ -10,11 +11,13 @@ namespace Application.Authentication.Commands.Register
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IPasswordHashService _passwordHashService;
 
-        public RegisterCommandHandler(IUserRepository userRepository, IJwtTokenService jwtTokenService)
+        public RegisterCommandHandler(IUserRepository userRepository, IJwtTokenService jwtTokenService, IPasswordHashService passwordHashService)
         {
             _userRepository = userRepository;
             _jwtTokenService = jwtTokenService;
+            _passwordHashService = passwordHashService;
         }
 
         public async Task<AuthenticationResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -33,7 +36,7 @@ namespace Application.Authentication.Commands.Register
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Username = request.Username,
-                Password = request.Password
+                Password = _passwordHashService.HashPassword(request.Password)
             };
 
             _userRepository.AddUser(user);
