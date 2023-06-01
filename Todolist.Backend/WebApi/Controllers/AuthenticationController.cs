@@ -1,6 +1,7 @@
 ﻿using Application.Authentication.Commands.Register;
 using Application.Authentication.Queries.Login;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Contracts.Authentication;
 
@@ -39,6 +40,13 @@ namespace WebApi.Controllers
             var authResult = await _mediator.Send(query);
 
             return Ok(authResult);
+        }
+
+        [HttpGet("Test")]
+        [Authorize]
+        public IActionResult Test()
+        {
+            return Ok("This is a test, and can only be accessed by an authroized user");
         }
     }
 }
