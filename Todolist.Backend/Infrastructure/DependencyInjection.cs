@@ -3,7 +3,9 @@ using Application.Shared.Interfaces.Persistance;
 using Infrastructure.Authentication;
 using Infrastructure.Persistance;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -11,9 +13,22 @@ namespace Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, ConfigurationManager configuration)
         {
-            //TODO: Move all constants to a JWT Settings class, which reads from user secrets 
+            services.AddAuthServices(configuration);
+
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthServices(this IServiceCollection services, ConfigurationManager configuration)
+        {
+            // Read and bind the JWT Settings from user secrets
+            var jwtSettings = new JwtSettings();
+            configuration.Bind(JwtSettings.SectionName, jwtSettings);
+            services.AddSingleton(Options.Create(jwtSettings));
+
             // Add token service and set Bearer Token validation parameters
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
             services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
@@ -23,13 +38,11 @@ namespace Infrastructure
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "Todolist API",
-                    ValidAudience = "Todolist API",
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes("super-secret-keysuper-secret-key"))
+                        Encoding.UTF8.GetBytes(jwtSettings.SecretKey!))
                 });
-
-            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }

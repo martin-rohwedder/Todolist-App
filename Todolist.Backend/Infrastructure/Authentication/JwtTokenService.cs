@@ -1,5 +1,6 @@
 ﻿using Application.Shared.Interfaces.Authentication;
 using Domain.Entities;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,11 +10,18 @@ namespace Infrastructure.Authentication
 {
     public class JwtTokenService : IJwtTokenService
     {
+        private readonly JwtSettings _jwtSettings;
+
+        public JwtTokenService(IOptions<JwtSettings> jwtOptions)
+        {
+            _jwtSettings = jwtOptions.Value;
+        }
+
         public string GenerateToken(User user)
         {
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes("super-secret-keysuper-secret-key")),
+                    Encoding.UTF8.GetBytes(_jwtSettings.SecretKey!)),
                     SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -25,9 +33,9 @@ namespace Infrastructure.Authentication
             };
 
             var securityToken = new JwtSecurityToken(
-                issuer: "Todolist API",
-                audience: "Todolist API",
-                expires: DateTime.UtcNow.AddMinutes(60),
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
                 claims: claims,
                 signingCredentials: signingCredentials);
 
