@@ -11,7 +11,7 @@ namespace Application.Shared.Services.Utilities
 
         public bool VerifyPassword(string password, string passwordHash)
         {
-            return !BCrypt.Net.BCrypt.Verify(password, passwordHash);
+            return BCrypt.Net.BCrypt.Verify(password, passwordHash);
         }
     }
 }
