@@ -20,6 +20,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("Api/[controller]/Register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
             var command = _mapper.Map<RegisterCommand>(request);
@@ -29,6 +30,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("Api/[controller]/Login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
             var query = _mapper.Map<LoginQuery>(request);
@@ -38,7 +40,6 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("Test")]
-        [Authorize]
         public IActionResult Test()
         {
             return Ok("This is a test, and can only be accessed by an authroized user");
