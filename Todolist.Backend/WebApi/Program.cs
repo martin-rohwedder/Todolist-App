@@ -1,8 +1,11 @@
 using Application;
 using Infrastructure;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System.Reflection;
 using WebApi.Shared.Errors;
 
 namespace WebApi
@@ -34,8 +37,14 @@ namespace WebApi
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
-            //Add custom problem details factory for creating error problem details responses.
+            // Add custom problem details factory for creating error problem details responses.
             builder.Services.AddSingleton<ProblemDetailsFactory, TodolistApiProblemDetailsFactory>();
+
+            // Make a global scan for Mapster configuration files, and Add Mapster config files and Mapster Service to the DI service container.
+            var mapsterConfig = TypeAdapterConfig.GlobalSettings;
+            mapsterConfig.Scan(Assembly.GetExecutingAssembly());
+            builder.Services.AddSingleton(mapsterConfig);
+            builder.Services.AddScoped<IMapper, ServiceMapper>();
 
             var app = builder.Build();
 

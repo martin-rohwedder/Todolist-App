@@ -1,5 +1,6 @@
 ﻿using Application.Authentication.Commands.Register;
 using Application.Authentication.Queries.Login;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,36 +11,30 @@ namespace WebApi.Controllers
     public class AuthenticationController : ApiControllerBase
     {
         private readonly ISender _mediator;
+        private readonly IMapper _mapper;
 
-        public AuthenticationController(ISender mediator)
+        public AuthenticationController(ISender mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpPost("Api/[controller]/Register")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
-            var command = new RegisterCommand(
-                request.FirstName, 
-                request.LastName, 
-                request.Username, 
-                request.Password);
-
+            var command = _mapper.Map<RegisterCommand>(request);
             var authResult = await _mediator.Send(command);
 
-            return Ok(authResult);
+            return Ok(_mapper.Map<AuthenticationResponse>(authResult));
         }
 
         [HttpPost("Api/[controller]/Login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var query = new LoginQuery(
-                request.Username,
-                request.Password);
-
+            var query = _mapper.Map<LoginQuery>(request);
             var authResult = await _mediator.Send(query);
 
-            return Ok(authResult);
+            return Ok(_mapper.Map<AuthenticationResponse>(authResult));
         }
 
         [HttpGet("Test")]
