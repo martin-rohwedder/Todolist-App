@@ -1,7 +1,9 @@
 using Application;
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using WebApi.Shared.Errors;
 
 namespace WebApi
 {
@@ -32,6 +34,9 @@ namespace WebApi
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
+            //Add custom problem details factory for creating error problem details responses.
+            builder.Services.AddSingleton<ProblemDetailsFactory, TodolistApiProblemDetailsFactory>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -40,6 +45,9 @@ namespace WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            //Add Exception Handler route to use ErrorsController
+            app.UseExceptionHandler("/Error");
 
             app.UseHttpsRedirection();
 

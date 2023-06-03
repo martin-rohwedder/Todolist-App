@@ -1,4 +1,5 @@
 ﻿using Application.Authentication.Shared;
+using Application.Shared.Errors;
 using Application.Shared.Interfaces.Authentication;
 using Application.Shared.Interfaces.Persistance;
 using Application.Shared.Interfaces.Utilities;
@@ -27,7 +28,7 @@ namespace Application.Authentication.Commands.Register
             // 1. Validate if user already exists in the user repository
             if (_userRepository.GetUserByUsername(request.Username) is not null)
             {
-                throw new Exception("User already exists");
+                throw new DuplicateUsernameException();
             }
 
             // 2. Create a new user and persist it in the database

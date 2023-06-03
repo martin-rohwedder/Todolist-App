@@ -1,4 +1,5 @@
 ﻿using Application.Authentication.Shared;
+using Application.Shared.Errors;
 using Application.Shared.Interfaces.Authentication;
 using Application.Shared.Interfaces.Persistance;
 using Application.Shared.Interfaces.Utilities;
@@ -27,13 +28,13 @@ namespace Application.Authentication.Queries.Login
             // 1. Validate that the user exists.
             if (_userRepository.GetUserByUsername(request.Username) is not User user)
             {
-                throw new Exception("User is not found");
+                throw new BadCredentialsException();
             }
 
             // 2. Validate that the password is correct
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            if (_passwordHashService.VerifyPassword(request.Password, user.Password))
             {
-                throw new Exception("Bad Credentials");
+                throw new BadCredentialsException();
             }
 
             // 3. Generate JWT Token
