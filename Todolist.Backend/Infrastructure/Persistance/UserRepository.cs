@@ -16,5 +16,10 @@ namespace Infrastructure.Persistance
         {
             return _users.SingleOrDefault(user => user.Username == username);
         }
+
+        public int GetUserCount()
+        {
+            return _users.Count;
+        }
     }
 }
