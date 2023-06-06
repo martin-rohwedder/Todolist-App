@@ -10,5 +10,8 @@
         public string Password { get; set; } = string.Empty;
         public DateTime DateTimeCreated { get; set; } = DateTime.UtcNow;
         public DateTime DateTimeUpdated { get; set; } = DateTime.UtcNow;
+        public string RefreshToken { get; set; } = string.Empty;
+        public DateTime RefreshTokenCreated { get; set; }
+        public DateTime RefreshTokenExpires { get; set; }
     }
 }

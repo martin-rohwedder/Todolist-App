@@ -40,6 +40,10 @@ namespace Application.Authentication.Queries.Login
             // 3. Generate JWT Token
             var token = _jwtTokenService.GenerateToken(user);
 
+            // 4. Generate and set Refresh Token
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            _jwtTokenService.SetRefreshToken(refreshToken, user);
+
             return new AuthenticationResult(user, token);
         }
     }
