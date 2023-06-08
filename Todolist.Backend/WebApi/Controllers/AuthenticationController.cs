@@ -1,15 +1,19 @@
 ﻿using Application.Authentication.Commands.Register;
 using Application.Authentication.Queries.Login;
+using Application.Authentication.Queries.RefreshToken;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApi.Contracts.Authentication;
 
 namespace WebApi.Controllers
 {
     public class AuthenticationController : ApiControllerBase
     {
+        private const string ControllerRoutePath = "Api/[controller]/";
+
         private readonly ISender _mediator;
         private readonly IMapper _mapper;
 
@@ -19,7 +23,7 @@ namespace WebApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("Api/[controller]/Register")]
+        [HttpPost($"{ControllerRoutePath}Register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
@@ -29,7 +33,7 @@ namespace WebApi.Controllers
             return Ok(_mapper.Map<AuthenticationResponse>(authResult));
         }
 
-        [HttpPost("Api/[controller]/Login")]
+        [HttpPost($"{ControllerRoutePath}Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
@@ -39,10 +43,14 @@ namespace WebApi.Controllers
             return Ok(_mapper.Map<AuthenticationResponse>(authResult));
         }
 
-        [HttpGet("Test")]
-        public IActionResult Test()
+        [HttpPost($"{ControllerRoutePath}RefreshToken")]
+        public async Task<IActionResult> RefreshToken()
         {
-            return Ok("This is a test, and can only be accessed by an authroized user");
+            var username = User.FindFirstValue(ClaimTypes.GivenName)!;
+
+            var result = await _mediator.Send(new RefreshTokenQuery(username));
+
+            return Ok(new { Token = result });
         }
     }
 }
