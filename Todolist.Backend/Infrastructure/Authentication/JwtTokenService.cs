@@ -12,6 +12,8 @@ namespace Infrastructure.Authentication
 {
     public class JwtTokenService : IJwtTokenService
     {
+        private const string RefreshTokenCookieName = "refresh_token";
+
         private readonly JwtSettings _jwtSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -31,9 +33,7 @@ namespace Infrastructure.Authentication
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Name, user.Username),
-                new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
-                new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -66,11 +66,16 @@ namespace Infrastructure.Authentication
                 Expires = refreshToken.Expires,
             };
 
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("RefreshToken", refreshToken.Token, cookieOptions);
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append(RefreshTokenCookieName, refreshToken.Token, cookieOptions);
 
             user.RefreshToken = refreshToken.Token;
             user.RefreshTokenCreated = refreshToken.DateTimeCreated;
             user.RefreshTokenExpires = refreshToken.Expires;
+        }
+
+        public string GetRefreshTokenCookie()
+        {
+            return _httpContextAccessor.HttpContext?.Request.Cookies[RefreshTokenCookieName]!;
         }
     }
 }

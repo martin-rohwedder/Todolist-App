@@ -7,5 +7,6 @@ namespace Application.Shared.Interfaces.Authentication
         string GenerateToken(User user);
         RefreshToken GenerateRefreshToken();
         void SetRefreshToken(RefreshToken refreshToken, User user);
+        string GetRefreshTokenCookie();
     }
 }
