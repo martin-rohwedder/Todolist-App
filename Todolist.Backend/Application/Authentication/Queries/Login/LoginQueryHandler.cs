@@ -32,7 +32,7 @@ namespace Application.Authentication.Queries.Login
             }
 
             // 2. Validate that the password is correct
-            if (!_passwordHashService.VerifyPassword(request.Password, user.Password))
+            if (!_passwordHashService.VerifyPassword(request.Password.ToLower(), user.Password))
             {
                 throw new BadCredentialsException();
             }

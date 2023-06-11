@@ -1,7 +1,7 @@
 ﻿namespace WebApi.Contracts.Authentication
 {
     public record AuthenticationResponse(
-        int Id,
+        int UserId,
         Guid Uuid,
         string FirstName,
         string LastName,

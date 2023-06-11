@@ -1,25 +1,27 @@
 ﻿using Application.Shared.Interfaces.Persistance;
 using Domain.Entities;
+using Infrastructure.DataAccess;
 
 namespace Infrastructure.Persistance
 {
     public class UserRepository : IUserRepository
     {
-        private static readonly List<User> _users = new List<User>();
+        private readonly TodoListDbContext _dbContext;
+
+        public UserRepository(TodoListDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public void AddUser(User user)
         {
-            _users.Add(user);
+            _dbContext.Users.Add(user);
+            _dbContext.SaveChangesAsync();
         }
 
         public User? GetUserByUsername(string username)
         {
-            return _users.SingleOrDefault(user => user.Username == username);
-        }
-
-        public int GetUserCount()
-        {
-            return _users.Count;
+            return _dbContext.Users.SingleOrDefault(user => user.Username == username);
         }
     }
 }

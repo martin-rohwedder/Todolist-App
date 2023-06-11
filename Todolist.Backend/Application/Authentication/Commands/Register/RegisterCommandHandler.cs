@@ -34,12 +34,10 @@ namespace Application.Authentication.Commands.Register
             // 2. Create a new user and persist it in the database
             var user = new User
             {
-                // TODO: Id has to be set automatically in Database with a primary key
-                Id = _userRepository.GetUserCount() + 1,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Username = request.Username,
-                Password = _passwordHashService.HashPassword(request.Password)
+                Password = _passwordHashService.HashPassword(request.Password.ToLower())
             };
 
             _userRepository.AddUser(user);
