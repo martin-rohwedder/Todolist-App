@@ -7,5 +7,6 @@ namespace WebApi.Controllers
     [Authorize]
     public class ApiControllerBase : ControllerBase
     {
+        protected const string ControllerRoutePath = "Api/[controller]/";
     }
 }
