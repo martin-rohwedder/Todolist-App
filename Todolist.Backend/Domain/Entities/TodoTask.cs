@@ -3,7 +3,7 @@
     public class TodoTask
     {
         public int TodoTaskId { get; set; }
-        public Guid Uuid { get; set; } = new Guid();
+        public Guid Uuid { get; set; } = Guid.NewGuid();
         public string Message { get; set; } = string.Empty;
         public bool IsCompleted { get; set; } = false;
         public bool IsArchived { get; set; } = false;

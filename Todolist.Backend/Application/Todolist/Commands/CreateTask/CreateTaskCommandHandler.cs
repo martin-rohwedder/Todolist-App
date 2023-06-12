@@ -9,10 +9,12 @@ namespace Application.Todolist.Commands.CreateTask
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskResult>
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITodoTaskRepository _todoTaskRepository;
 
-        public CreateTaskCommandHandler(IUserRepository userRepository)
+        public CreateTaskCommandHandler(IUserRepository userRepository, ITodoTaskRepository todoTaskRepository)
         {
             _userRepository = userRepository;
+            _todoTaskRepository = todoTaskRepository;
         }
 
         public async Task<TaskResult> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -32,6 +34,8 @@ namespace Application.Todolist.Commands.CreateTask
                 Message = request.Message,
                 User = user,
             };
+
+            _todoTaskRepository.AddTodoTask(todoTask);
 
             // 3. Respond with the Task Result object
             return new TaskResult(todoTask);

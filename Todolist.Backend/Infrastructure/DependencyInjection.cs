@@ -28,6 +28,7 @@ namespace Infrastructure
                     x => x.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName)));
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
 
             return services;
         }
