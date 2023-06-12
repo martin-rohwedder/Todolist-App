@@ -42,7 +42,7 @@ namespace Application.Authentication.Commands.Register
 
             _userRepository.AddUser(user);
 
-            //TODO: 3. Generate JWT Token
+            // 3. Generate JWT Token
             var token = _jwtTokenService.GenerateToken(user);
 
             return new AuthenticationResult(user, token);
