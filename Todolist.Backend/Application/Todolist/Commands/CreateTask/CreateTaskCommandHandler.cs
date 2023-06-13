@@ -27,8 +27,14 @@ namespace Application.Todolist.Commands.CreateTask
                 throw new TodoTaskEmptyMessageException();
             }
 
-            // 2. create a new todo task entity and associate it with a user and persist it
+            // 2. Fetch user object from database and check if user retrieved is null
             var user = _userRepository.GetUserByUsername(request.Username);
+            if (user is null)
+            {
+                throw new UserNotFoundException();
+            }
+
+            // 3. create a new todo task entity and associate it with a user and persist it
             var todoTask = new TodoTask
             {
                 Message = request.Message,
@@ -37,7 +43,7 @@ namespace Application.Todolist.Commands.CreateTask
 
             _todoTaskRepository.AddTodoTask(todoTask);
 
-            // 3. Respond with the Task Result object
+            // 4. Respond with the Task Result object
             return new TaskResult(todoTask);
         }
     }
