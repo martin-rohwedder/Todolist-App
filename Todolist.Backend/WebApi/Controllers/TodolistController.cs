@@ -25,7 +25,7 @@ namespace WebApi.Controllers
 
             var taskResult = await _mediator.Send(new CreateTaskCommand(request.Message, username));
 
-            return Ok(new { Id = taskResult.TodoTask.TodoTaskId, taskResult.TodoTask.Uuid, taskResult.TodoTask.Message, taskResult.TodoTask.IsCompleted, taskResult.TodoTask.IsArchived, DateCreated = taskResult.TodoTask.DateTimeCreated });
+            return Ok(_mapper.Map<TaskResponse>(taskResult));
         }
     }
 }
