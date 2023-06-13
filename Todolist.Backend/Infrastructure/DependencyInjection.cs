@@ -1,13 +1,16 @@
 ﻿using Application.Shared.Interfaces.Authentication;
 using Application.Shared.Interfaces.Persistance;
 using Infrastructure.Authentication;
+using Infrastructure.DataAccess;
 using Infrastructure.Persistance;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 namespace Infrastructure
@@ -19,7 +22,13 @@ namespace Infrastructure
             services.AddAuthServices(configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddDbContext<TodoListDbContext>(
+                options => options.UseSqlServer(
+                    configuration.GetConnectionString("TodoListDbConnectionString"),
+                    x => x.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName)));
+
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
 
             return services;
         }

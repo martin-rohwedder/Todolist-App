@@ -12,8 +12,6 @@ namespace WebApi.Controllers
 {
     public class AuthenticationController : ApiControllerBase
     {
-        private const string ControllerRoutePath = "Api/[controller]/";
-
         private readonly ISender _mediator;
         private readonly IMapper _mapper;
 

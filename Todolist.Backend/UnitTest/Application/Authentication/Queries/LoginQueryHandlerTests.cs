@@ -109,7 +109,7 @@ namespace UnitTest.Application.Authentication.Queries
                 FirstName = "John",
                 LastName = "Doe",
                 Username = "J.Doe",
-                Password = _passwordHashServiceMock.Object.HashPassword("Pwd12345.")
+                Password = _passwordHashServiceMock.Object.HashPassword("Pwd12345.".ToLower())
             });
 
             var query = new LoginQuery("J.Doe", "Pwd12345.");

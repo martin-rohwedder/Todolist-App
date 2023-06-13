@@ -30,6 +30,16 @@ Here is a small guide on how to setup the Backend Todolist API.
 }
 ```
 
+3. In the `User Secrets` add the connection string for your SQL Server Database.
+
+```json
+"ConnectionStrings": {
+    "TodoListDbConnectionString": "YOUR CONNECTION STRING"
+}
+```
+
+4. Update the database with the applications migrations using the Entity Framework Tool `Update-Database`. Make sure that you run the tool from the `Infrastructure` project.
+
 ---
 
 &copy; 2023 [Martin Rohwedder](https://github.com/martin-rohwedder)

@@ -6,6 +6,5 @@ namespace Application.Shared.Interfaces.Persistance
     {
         void AddUser(User user);
         User? GetUserByUsername(string username);
-        int GetUserCount();
     }
 }
