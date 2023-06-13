@@ -1,4 +1,5 @@
-﻿using Application.Todolist.Shared;
+﻿using Application.Todolist.Commands.CreateTask;
+using Application.Todolist.Shared;
 using Mapster;
 using WebApi.Contracts.Todolist;
 
@@ -10,6 +11,9 @@ namespace WebApi.Shared.Mapping
         {
             config.NewConfig<TaskResult, TaskResponse>()
                 .Map(dest => dest, src => src.TodoTask);
+
+            config.NewConfig<CreateTaskRequest, CreateTaskCommand>()
+                .Map(dest => dest.Username, src => MapContext.Current!.Parameters["username"]);
         }
     }
 }

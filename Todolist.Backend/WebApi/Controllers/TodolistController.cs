@@ -23,7 +23,8 @@ namespace WebApi.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
-            var taskResult = await _mediator.Send(new CreateTaskCommand(request.Message, username));
+            var command = _mapper.From(request).AddParameters("username", username).AdaptToType<CreateTaskCommand>();
+            var taskResult = await _mediator.Send(command);
 
             return Ok(_mapper.Map<TaskResponse>(taskResult));
         }
