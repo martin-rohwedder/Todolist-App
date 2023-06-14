@@ -15,7 +15,8 @@ namespace UnitTest.Application.Todolist.Queries
         private IList<User> _users;
         private IList<TodoTask> _tasks;
 
-        [SetUp] public void SetUp()
+        [SetUp]
+        public void SetUp()
         {
             _userRepositoryMock = new();
             _todoTaskRepositoryMock = new();
