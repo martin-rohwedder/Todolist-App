@@ -1,4 +1,6 @@
 ﻿using Application.Todolist.Commands.CreateTask;
+using Application.Todolist.Queries.GetTasks;
+using Mapster;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +29,20 @@ namespace WebApi.Controllers
             var taskResult = await _mediator.Send(command);
 
             return Ok(_mapper.Map<TaskResponse>(taskResult));
+        }
+
+        [HttpPost($"{ControllerRoutePath}Task/GetAll")]
+        public async Task<IActionResult> GetTasks()
+        {
+            var username = User.FindFirstValue(ClaimTypes.GivenName)!;
+
+            var query = new GetTasksQuery(username);
+            var taskResult = await _mediator.Send(query);
+
+            // Map the task results list to a list of task response objects
+            var taskResponseList = taskResult.AsQueryable().ProjectToType<TaskResponse>();
+
+            return Ok(taskResponseList);
         }
     }
 }

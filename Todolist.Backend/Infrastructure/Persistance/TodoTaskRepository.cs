@@ -18,5 +18,10 @@ namespace Infrastructure.Persistance
             _dbContext.Add(todoTask);
             _dbContext.SaveChangesAsync();
         }
+
+        public List<TodoTask> GetAllTasksFromUser(string username)
+        {
+            return _dbContext.TodoTasks.Where(user => user.User!.Username == username).ToList();
+        }
     }
 }
