@@ -21,7 +21,7 @@ namespace Infrastructure.Persistance
 
         public List<TodoTask> GetAllTasksFromUser(string username)
         {
-            return _dbContext.TodoTasks.Where(user => user.User!.Username == username).ToList();
+            return _dbContext.TodoTasks.Where(task => task.User!.Username == username).ToList();
         }
     }
 }
