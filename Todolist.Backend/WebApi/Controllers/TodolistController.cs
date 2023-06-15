@@ -1,4 +1,5 @@
 ﻿using Application.Todolist.Commands.CreateTask;
+using Application.Todolist.Commands.UpdateTask;
 using Application.Todolist.Queries.GetTasks;
 using Mapster;
 using MapsterMapper;
@@ -31,7 +32,7 @@ namespace WebApi.Controllers
             return Ok(_mapper.Map<TaskResponse>(taskResult));
         }
 
-        [HttpPost($"{ControllerRoutePath}Task/GetAll")]
+        [HttpGet($"{ControllerRoutePath}Task/GetAll")]
         public async Task<IActionResult> GetTasks()
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
@@ -43,6 +44,17 @@ namespace WebApi.Controllers
             var taskResponseList = taskResult.AsQueryable().ProjectToType<TaskResponse>();
 
             return Ok(taskResponseList);
+        }
+
+        [HttpPut($"{ControllerRoutePath}Task/Update")]
+        public async Task<IActionResult> UpdateTask(UpdateTaskRequest request)
+        {
+            var username = User.FindFirstValue(ClaimTypes.GivenName)!;
+
+            var command = _mapper.From(request).AddParameters("username", username).AdaptToType<UpdateTaskCommand>();
+            var taskResult = await _mediator.Send(command);
+
+            return Ok(_mapper.Map<TaskResponse>(taskResult));
         }
     }
 }
