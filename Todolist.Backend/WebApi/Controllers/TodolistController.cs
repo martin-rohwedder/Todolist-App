@@ -31,7 +31,7 @@ namespace WebApi.Controllers
             return Ok(_mapper.Map<TaskResponse>(taskResult));
         }
 
-        [HttpPost($"{ControllerRoutePath}Task/GetAll")]
+        [HttpGet($"{ControllerRoutePath}Task/GetAll")]
         public async Task<IActionResult> GetTasks()
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
