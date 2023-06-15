@@ -23,5 +23,15 @@ namespace Infrastructure.Persistance
         {
             return _dbContext.TodoTasks.Where(task => task.User!.Username == username).ToList();
         }
+
+        public TodoTask GetTaskByUuid(Guid uuid)
+        {
+            return _dbContext.TodoTasks.SingleOrDefault(task => task.Uuid.Equals(uuid))!;
+        }
+
+        public void UpdateTasks()
+        {
+            _dbContext.SaveChanges();
+        }
     }
 }

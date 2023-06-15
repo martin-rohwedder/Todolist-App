@@ -6,5 +6,7 @@ namespace Application.Shared.Interfaces.Persistance
     {
         void AddTodoTask(TodoTask todoTask);
         List<TodoTask> GetAllTasksFromUser(string username);
+        TodoTask GetTaskByUuid(Guid uuid);
+        void UpdateTasks();
     }
 }
