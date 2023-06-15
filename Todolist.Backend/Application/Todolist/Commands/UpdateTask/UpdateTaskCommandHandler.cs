@@ -34,7 +34,13 @@ namespace Application.Todolist.Commands.UpdateTask
                 throw new TaskNotFoundException();
             }
 
-            // 3. Update the task and persist it to the database again
+            // 3. Validate that the updated message is not empty
+            if (string.IsNullOrEmpty(request.Message))
+            {
+                throw new TodoTaskEmptyMessageException();
+            }
+
+            // 4. Update the task and persist it to the database again
             task.Message = request.Message;
             task.IsCompleted = request.IsCompleted;
             task.IsArchived = request.IsArchived;
@@ -42,7 +48,7 @@ namespace Application.Todolist.Commands.UpdateTask
 
             _todoTaskRepository.UpdateTasks();
 
-            // 4. Return the updated task result
+            // 5. Return the updated task result
             return new TaskResult(task);
         }
     }
