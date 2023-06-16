@@ -4,5 +4,7 @@
         Guid Uuid,
         string FirstName,
         string LastName,
-        string Username);
+        string Username,
+        DateTime DateTimeCreated,
+        DateTime DateTimeUpdated);
 }
