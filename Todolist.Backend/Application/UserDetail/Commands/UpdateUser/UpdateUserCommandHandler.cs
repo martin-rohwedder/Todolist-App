@@ -34,6 +34,7 @@ namespace Application.UserDetail.Commands.UpdateUser
             // 3. Update and persist updated user
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
+            user.DateTimeUpdated = DateTime.UtcNow;
 
             _userRepository.UpdateUser();
 
