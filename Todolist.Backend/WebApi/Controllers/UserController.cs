@@ -1,4 +1,5 @@
-﻿using Application.UserDetail.Commands.UpdateUser;
+﻿using Application.UserDetail.Commands.ChangePassword;
+using Application.UserDetail.Commands.UpdateUser;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,17 @@ namespace WebApi.Controllers
             var userDetailResult = await _mediator.Send(command);
 
             return Ok(_mapper.Map<UserDetailResponse>(userDetailResult));
+        }
+
+        [HttpPut($"{ControllerRoutePath}ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            var username = User.FindFirstValue(ClaimTypes.GivenName)!;
+
+            var command = _mapper.From(request).AddParameters("username", username).AdaptToType<ChangePasswordCommand>();
+            var passwordChangedResult = await _mediator.Send(command);
+
+            return Ok(new { PasswordHasChanged = passwordChangedResult });
         }
     }
 }
