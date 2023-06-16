@@ -23,5 +23,10 @@ namespace Infrastructure.Persistance
         {
             return _dbContext.Users.SingleOrDefault(user => user.Username == username);
         }
+
+        public void UpdateUser()
+        {
+            _dbContext.SaveChanges();
+        }
     }
 }
