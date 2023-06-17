@@ -37,7 +37,7 @@ namespace Application.Authentication.Commands.Register
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Username = request.Username,
-                Password = _passwordHashService.HashPassword(request.Password.ToLower())
+                Password = _passwordHashService.HashPassword(request.Password)
             };
 
             _userRepository.AddUser(user);
