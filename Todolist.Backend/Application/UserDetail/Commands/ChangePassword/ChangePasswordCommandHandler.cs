@@ -34,13 +34,13 @@ namespace Application.UserDetail.Commands.ChangePassword
             }
 
             // 3. Check that the users current password, match with old password from request
-            if (!_passwordHashService.VerifyPassword(request.OldPassword.ToLower(), user.Password))
+            if (!_passwordHashService.VerifyPassword(request.OldPassword, user.Password))
             {
                 throw new ChangePasswordMismatchException();
             }
 
             // 4. Hash new password and store it in user details, and update (persist) user.
-            user.Password = _passwordHashService.HashPassword(request.NewPassword.ToLower());
+            user.Password = _passwordHashService.HashPassword(request.NewPassword);
             user.DateTimeUpdated = DateTime.UtcNow;
 
             _userRepository.UpdateUser();
