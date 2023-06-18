@@ -15,38 +15,61 @@ namespace WebApi.Controllers
         private readonly ISender _mediator;
         private readonly IMapper _mapper;
 
-        public AuthenticationController(ISender mediator, IMapper mapper)
+        private readonly ILogger<AuthenticationController> _logger;
+
+        public AuthenticationController(ISender mediator, IMapper mapper, ILogger<AuthenticationController> logger)
         {
             _mediator = mediator;
             _mapper = mapper;
+
+            _logger = logger;
         }
 
         [HttpPost($"{ControllerRoutePath}Register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
+            _logger.LogInformation("Register Request Started");
+
             var command = _mapper.Map<RegisterCommand>(request);
             var authResult = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<AuthenticationResponse>(authResult));
+            _logger.LogInformation("Register Request Finished");
+
+            var authResponse = _mapper.Map<AuthenticationResponse>(authResult);
+            _logger.LogDebug("Register response: {AuthenticationResponse}", authResponse);
+
+            return Ok(authResponse);
         }
 
         [HttpPost($"{ControllerRoutePath}Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
+            _logger.LogInformation("Login Request Started");
+
             var query = _mapper.Map<LoginQuery>(request);
             var authResult = await _mediator.Send(query);
 
-            return Ok(_mapper.Map<AuthenticationResponse>(authResult));
+            _logger.LogInformation("Login Request Finished");
+
+            var authResponse = _mapper.Map<AuthenticationResponse>(authResult);
+            _logger.LogDebug("Login response: {AuthenticationResponse}", authResponse);
+
+            return Ok(authResponse);
         }
 
         [HttpPost($"{ControllerRoutePath}RefreshToken")]
         public async Task<IActionResult> RefreshToken()
         {
+            _logger.LogInformation("Refresh Token Request Started");
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
+            _logger.LogDebug("Refresh Token Request: Found authenticated user with username {Username}", username);
+
             var result = await _mediator.Send(new RefreshTokenQuery(username));
+
+            _logger.LogInformation("Refresh Token Request Finished");
 
             return Ok(new { Token = result });
         }
