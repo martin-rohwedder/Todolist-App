@@ -4,6 +4,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using WebApi.Shared.Errors;
@@ -15,6 +16,10 @@ namespace WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add Serilog for logging
+            builder.Host.UseSerilog((context, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration));
 
             // Add services to the container.
             builder.Services.AddApplication();
@@ -47,6 +52,9 @@ namespace WebApi
             builder.Services.AddScoped<IMapper, ServiceMapper>();
 
             var app = builder.Build();
+
+            // Use Serilogs automatic HTTP request logging
+            app.UseSerilogRequestLogging();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
