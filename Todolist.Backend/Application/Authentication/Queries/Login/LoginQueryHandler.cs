@@ -44,6 +44,8 @@ namespace Application.Authentication.Queries.Login
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
             _jwtTokenService.SetRefreshToken(refreshToken, user);
 
+            _userRepository.UpdateUser();
+
             return new AuthenticationResult(user, token);
         }
     }

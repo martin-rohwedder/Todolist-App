@@ -37,6 +37,8 @@ namespace Application.Authentication.Queries.RefreshToken
                 var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
                 _jwtTokenService.SetRefreshToken(newRefreshToken, user);
 
+                _userRepository.UpdateUser();
+
                 return token;
             }
         }
