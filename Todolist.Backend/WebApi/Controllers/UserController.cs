@@ -10,13 +10,12 @@ namespace WebApi.Controllers
 {
     public class UserController : ApiControllerBase
     {
-        private readonly ISender _mediator;
-        private readonly IMapper _mapper;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(ISender mediator, IMapper mapper)
+        public UserController(ISender mediator, IMapper mapper, ILogger<UserController> logger)
+            : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPut($"{ControllerRoutePath}Update")]
@@ -24,10 +23,15 @@ namespace WebApi.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
+            _logger.LogDebug("Update User Request: Found authenticated user with username {Username}", username);
+
             var command = _mapper.From(request).AddParameters("username", username).AdaptToType<UpdateUserCommand>();
             var userDetailResult = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<UserDetailResponse>(userDetailResult));
+            var userResponse = _mapper.Map<UserDetailResponse>(userDetailResult);
+            _logger.LogDebug("Update User Request: {UserResponse}", userResponse);
+
+            return Ok(userResponse);
         }
 
         [HttpPut($"{ControllerRoutePath}ChangePassword")]
@@ -35,8 +39,12 @@ namespace WebApi.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
+            _logger.LogDebug("Change Password Request: Found authenticated user with username {Username}", username);
+
             var command = _mapper.From(request).AddParameters("username", username).AdaptToType<ChangePasswordCommand>();
             var passwordChangedResult = await _mediator.Send(command);
+
+            _logger.LogDebug("Change Password Request: Password Has Changed Response is {PasswordChangedResult}", passwordChangedResult);
 
             return Ok(new { PasswordHasChanged = passwordChangedResult });
         }

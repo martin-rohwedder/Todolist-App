@@ -12,13 +12,12 @@ namespace WebApi.Controllers
 {
     public class AuthenticationController : ApiControllerBase
     {
-        private readonly ISender _mediator;
-        private readonly IMapper _mapper;
+        private readonly ILogger<AuthenticationController> _logger;
 
-        public AuthenticationController(ISender mediator, IMapper mapper)
+        public AuthenticationController(ISender mediator, IMapper mapper, ILogger<AuthenticationController> logger)
+            : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost($"{ControllerRoutePath}Register")]
@@ -28,7 +27,10 @@ namespace WebApi.Controllers
             var command = _mapper.Map<RegisterCommand>(request);
             var authResult = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<AuthenticationResponse>(authResult));
+            var authResponse = _mapper.Map<AuthenticationResponse>(authResult);
+            _logger.LogDebug("Register response: {AuthenticationResponse}", authResponse);
+
+            return Ok(authResponse);
         }
 
         [HttpPost($"{ControllerRoutePath}Login")]
@@ -38,13 +40,18 @@ namespace WebApi.Controllers
             var query = _mapper.Map<LoginQuery>(request);
             var authResult = await _mediator.Send(query);
 
-            return Ok(_mapper.Map<AuthenticationResponse>(authResult));
+            var authResponse = _mapper.Map<AuthenticationResponse>(authResult);
+            _logger.LogDebug("Login response: {AuthenticationResponse}", authResponse);
+
+            return Ok(authResponse);
         }
 
         [HttpPost($"{ControllerRoutePath}RefreshToken")]
         public async Task<IActionResult> RefreshToken()
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
+
+            _logger.LogDebug("Refresh Token Request: Found authenticated user with username {Username}", username);
 
             var result = await _mediator.Send(new RefreshTokenQuery(username));
 

@@ -12,13 +12,12 @@ namespace WebApi.Controllers
 {
     public class TodolistController : ApiControllerBase
     {
-        private readonly ISender _mediator;
-        private readonly IMapper _mapper;
+        private readonly ILogger<TodolistController> _logger;
 
-        public TodolistController(ISender mediator, IMapper mapper)
+        public TodolistController(ISender mediator, IMapper mapper, ILogger<TodolistController> logger)
+            : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost($"{ControllerRoutePath}Task/Create")]
@@ -26,10 +25,15 @@ namespace WebApi.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
+            _logger.LogDebug("Create Task Request: Found authenticated user with username {Username}", username);
+
             var command = _mapper.From(request).AddParameters("username", username).AdaptToType<CreateTaskCommand>();
             var taskResult = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<TaskResponse>(taskResult));
+            var taskResponse = _mapper.Map<TaskResponse>(taskResult);
+            _logger.LogDebug("Create Task Request: {TaskResponse}", taskResponse);
+
+            return Ok(taskResponse);
         }
 
         [HttpGet($"{ControllerRoutePath}Task/GetAll")]
@@ -37,11 +41,14 @@ namespace WebApi.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
+            _logger.LogDebug("Get All Task Request: Found authenticated user with username {Username}", username);
+
             var query = new GetTasksQuery(username);
             var taskResult = await _mediator.Send(query);
 
             // Map the task results list to a list of task response objects
             var taskResponseList = taskResult.AsQueryable().ProjectToType<TaskResponse>();
+            _logger.LogDebug("Get All Tasks Request: {TaskResponseList}", taskResponseList);
 
             return Ok(taskResponseList);
         }
@@ -51,10 +58,15 @@ namespace WebApi.Controllers
         {
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
+            _logger.LogDebug("Update Task Request: Found authenticated user with username {Username}", username);
+
             var command = _mapper.From(request).AddParameters("username", username).AdaptToType<UpdateTaskCommand>();
             var taskResult = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<TaskResponse>(taskResult));
+            var taskResponse = _mapper.Map<TaskResponse>(taskResult);
+            _logger.LogDebug("Update Task Request: {TaskResponse}", taskResponse);
+
+            return Ok(taskResponse);
         }
     }
 }
