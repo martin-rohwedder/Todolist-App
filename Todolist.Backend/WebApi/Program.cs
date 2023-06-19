@@ -2,11 +2,13 @@ using Application;
 using Infrastructure;
 using Mapster;
 using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
+using WebApi.Behaviors;
 using WebApi.Shared.Errors;
 
 namespace WebApi
@@ -20,6 +22,9 @@ namespace WebApi
             // Add Serilog for logging
             builder.Host.UseSerilog((context, configuration) =>
                 configuration.ReadFrom.Configuration(context.Configuration));
+
+            // Add Logging Behavior Pipeline for logging between MediatR Handlers.
+            builder.Services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             // Add services to the container.
             builder.Services.AddApplication();
