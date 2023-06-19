@@ -27,16 +27,12 @@ namespace WebApi.Controllers
         [HttpPut($"{ControllerRoutePath}Update")]
         public async Task<IActionResult> UpdateUser(UpdateUserRequest request)
         {
-            _logger.LogInformation("Update User Request Started");
-
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
             _logger.LogDebug("Update User Request: Found authenticated user with username {Username}", username);
 
             var command = _mapper.From(request).AddParameters("username", username).AdaptToType<UpdateUserCommand>();
             var userDetailResult = await _mediator.Send(command);
-
-            _logger.LogInformation("Update User Request Finished");
 
             var userResponse = _mapper.Map<UserDetailResponse>(userDetailResult);
             _logger.LogDebug("Update User Request: {UserResponse}", userResponse);
@@ -47,8 +43,6 @@ namespace WebApi.Controllers
         [HttpPut($"{ControllerRoutePath}ChangePassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
         {
-            _logger.LogInformation("Change Password Request Started");
-
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
             _logger.LogDebug("Change Password Request: Found authenticated user with username {Username}", username);
@@ -56,8 +50,7 @@ namespace WebApi.Controllers
             var command = _mapper.From(request).AddParameters("username", username).AdaptToType<ChangePasswordCommand>();
             var passwordChangedResult = await _mediator.Send(command);
 
-            _logger.LogInformation("Change Password Request: Password Has Changed Response is {PasswordChangedResult}", passwordChangedResult);
-            _logger.LogInformation("Change Password Request Finished");
+            _logger.LogDebug("Change Password Request: Password Has Changed Response is {PasswordChangedResult}", passwordChangedResult);
 
             return Ok(new { PasswordHasChanged = passwordChangedResult });
         }

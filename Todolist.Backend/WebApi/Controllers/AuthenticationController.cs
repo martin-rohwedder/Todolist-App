@@ -29,12 +29,8 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
-            _logger.LogInformation("Register Request Started");
-
             var command = _mapper.Map<RegisterCommand>(request);
             var authResult = await _mediator.Send(command);
-
-            _logger.LogInformation("Register Request Finished");
 
             var authResponse = _mapper.Map<AuthenticationResponse>(authResult);
             _logger.LogDebug("Register response: {AuthenticationResponse}", authResponse);
@@ -46,12 +42,8 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            _logger.LogInformation("Login Request Started");
-
             var query = _mapper.Map<LoginQuery>(request);
             var authResult = await _mediator.Send(query);
-
-            _logger.LogInformation("Login Request Finished");
 
             var authResponse = _mapper.Map<AuthenticationResponse>(authResult);
             _logger.LogDebug("Login response: {AuthenticationResponse}", authResponse);
@@ -62,14 +54,11 @@ namespace WebApi.Controllers
         [HttpPost($"{ControllerRoutePath}RefreshToken")]
         public async Task<IActionResult> RefreshToken()
         {
-            _logger.LogInformation("Refresh Token Request Started");
             var username = User.FindFirstValue(ClaimTypes.GivenName)!;
 
             _logger.LogDebug("Refresh Token Request: Found authenticated user with username {Username}", username);
 
             var result = await _mediator.Send(new RefreshTokenQuery(username));
-
-            _logger.LogInformation("Refresh Token Request Finished");
 
             return Ok(new { Token = result });
         }
