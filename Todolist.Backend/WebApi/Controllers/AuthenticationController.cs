@@ -12,16 +12,11 @@ namespace WebApi.Controllers
 {
     public class AuthenticationController : ApiControllerBase
     {
-        private readonly ISender _mediator;
-        private readonly IMapper _mapper;
-
         private readonly ILogger<AuthenticationController> _logger;
 
         public AuthenticationController(ISender mediator, IMapper mapper, ILogger<AuthenticationController> logger)
+            : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
-
             _logger = logger;
         }
 

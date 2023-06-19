@@ -12,16 +12,11 @@ namespace WebApi.Controllers
 {
     public class TodolistController : ApiControllerBase
     {
-        private readonly ISender _mediator;
-        private readonly IMapper _mapper;
-
         private readonly ILogger<TodolistController> _logger;
 
         public TodolistController(ISender mediator, IMapper mapper, ILogger<TodolistController> logger)
+            : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
-
             _logger = logger;
         }
 

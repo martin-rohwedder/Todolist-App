@@ -10,17 +10,11 @@ namespace WebApi.Controllers
 {
     public class UserController : ApiControllerBase
     {
-        private readonly ISender _mediator;
-        private readonly IMapper _mapper;
-
-
         private readonly ILogger<UserController> _logger;
 
         public UserController(ISender mediator, IMapper mapper, ILogger<UserController> logger)
+            : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
-
             _logger = logger;
         }
 
